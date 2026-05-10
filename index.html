@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>PROJECT D.I.M.K.A.</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070f;--surface:#0f0f1e;--s2:#14142a;--s3:#1a1a30;
+  --border:rgba(255,255,255,0.07);
+  --accent:#9d4edd;--ac2:#ff4fa0;--ac3:#38bdf8;--gold:#fbbf24;
+  --text:#e2e2f0;--muted:#5560a0;--dim:#3a3a70;
+  --bubble-me:#5b21b6;--bubble-them:#1e1e3a;
+  --font-ui:'Syne',sans-serif;--font-mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font-ui)}
+button{font-family:var(--font-ui);cursor:pointer}
+input{font-family:var(--font-ui)}
+
+/* ─── LAYOUT ─── */
+#root{height:100vh;display:flex;flex-direction:column;max-width:500px;margin:0 auto;position:relative}
+
+/* ─── SCREENS ─── */
+.screen{display:none;flex-direction:column;height:100%;overflow:hidden}
+.screen.active{display:flex}
+
+/* ══════════════════════════════════
+   INTRO
+══════════════════════════════════ */
+#s-intro{align-items:center;justify-content:center;text-align:center;padding:32px 24px;position:relative}
+.intro-bg{position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(157,78,221,.18) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 60% at 80% 90%,rgba(255,79,160,.12) 0%,transparent 60%)}
+.intro-city{width:100%;max-width:420px;margin:0 auto 28px;position:relative;z-index:1}
+.logo{font-size:clamp(36px,10vw,60px);font-weight:800;letter-spacing:-2px;line-height:1;position:relative;z-index:1;margin-bottom:6px}
+.logo span:nth-child(1){color:var(--accent)}
+.logo span:nth-child(2){color:var(--ac3)}
+.logo span:nth-child(3){color:var(--ac2)}
+.logo span:nth-child(4){color:var(--gold)}
+.logo span:nth-child(5){color:var(--accent)}
+.tagline{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:36px;position:relative;z-index:1}
+.start-btn{background:linear-gradient(135deg,var(--accent),var(--ac2));border:none;border-radius:20px;padding:16px 52px;font-weight:700;font-size:16px;color:#fff;position:relative;z-index:1;transition:.15s}
+.start-btn:hover{opacity:.9;transform:scale(1.03)}
+
+/* ══════════════════════════════════
+   DATING APP
+══════════════════════════════════ */
+#s-dating{background:var(--bg)}
+.dating-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--surface);border-bottom:.5px solid var(--border);flex-shrink:0}
+.dating-logo{font-weight:800;font-size:17px;background:linear-gradient(90deg,var(--accent),var(--ac2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.dating-icons{display:flex;gap:14px;font-size:18px;opacity:.35}
+.dating-icons span{cursor:pointer;transition:.2s}
+.dating-icons span.active{opacity:1;color:var(--accent)}
+
+.tab-row{display:flex;gap:6px;padding:10px 16px;background:var(--surface);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.tab-row::-webkit-scrollbar{display:none}
+.tab{font-size:12px;padding:6px 14px;border-radius:20px;border:.5px solid var(--border);background:transparent;color:var(--muted);white-space:nowrap;transition:.2s}
+.tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.card-area{flex:1;display:flex;align-items:center;justify-content:center;padding:12px 16px;overflow:hidden;position:relative}
+.pcard{width:100%;max-width:380px;background:var(--s2);border-radius:22px;border:.5px solid var(--border);overflow:hidden;max-height:100%;overflow-y:auto;scrollbar-width:none;transition:transform .35s,opacity .35s}
+.pcard::-webkit-scrollbar{display:none}
+.pcard.gone-r{animation:gone-r .35s forwards}
+.pcard.gone-l{animation:gone-l .35s forwards}
+@keyframes gone-r{to{transform:translateX(130%) rotate(12deg);opacity:0}}
+@keyframes gone-l{to{transform:translateX(-130%) rotate(-12deg);opacity:0}}
+.card-art{width:100%;height:240px;flex-shrink:0;position:relative;overflow:hidden}
+.card-info{padding:18px}
+.card-name-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.card-name{font-size:22px;font-weight:700}
+.card-age{font-size:16px;color:var(--muted)}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.tag{font-size:11px;padding:4px 10px;border-radius:20px;border:.5px solid var(--border);color:var(--muted);background:var(--surface);font-family:var(--font-mono)}
+.card-bio{font-size:13.5px;line-height:1.65;color:#b0b0d0;margin-bottom:14px}
+.card-prompts{display:flex;flex-direction:column;gap:8px}
+.cprompt{background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:10px 14px}
+.cprompt-q{font-size:10px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-family:var(--font-mono)}
+.cprompt-a{font-size:13px;color:var(--text);line-height:1.5}
+
+.actions{display:flex;align-items:center;justify-content:center;gap:18px;padding:14px 16px 24px;flex-shrink:0}
+.act{width:62px;height:62px;border-radius:50%;border:1.5px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;transition:.15s;color:#fff;line-height:1}
+.act:hover{transform:scale(1.1)}
+.act:active{transform:scale(.92)}
+.act.like{background:rgba(157,78,221,.22);border-color:var(--accent);color:#fff;text-shadow:0 0 14px rgba(157,78,221,.85),0 0 4px rgba(255,255,255,.4);font-size:30px}
+.act.nope{background:rgba(255,79,160,.18);border-color:var(--ac2);color:#ff7ab8;text-shadow:0 0 12px rgba(255,79,160,.7);font-size:24px}
+.act.super{background:rgba(56,189,248,.15);border-color:var(--ac3);font-size:22px;color:var(--gold);text-shadow:0 0 10px rgba(251,191,36,.5)}
+.no-more{text-align:center;padding:40px 24px;color:var(--muted);font-size:14px;line-height:1.8}
+
+/* ─── MATCH OVERLAY ─── */
+.match-ov{position:fixed;inset:0;z-index:999;background:rgba(5,5,15,.96);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 24px}
+.match-ov.show{display:flex}
+.m-emoji{font-size:60px;margin-bottom:18px;animation:pop .4s}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.m-title{font-size:30px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.m-sub{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px}
+.m-btn{background:var(--accent);color:#fff;border:none;border-radius:16px;padding:14px 36px;font-weight:700;font-size:15px;width:100%;max-width:260px;margin-bottom:10px;transition:.2s}
+.m-btn:hover{opacity:.85}
+.m-btn.sec{background:transparent;border:.5px solid var(--border);color:var(--muted)}
+
+/* ══════════════════════════════════
+   CHATS LIST
+══════════════════════════════════ */
+#s-chats{background:var(--bg)}
+.chats-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--surface);border-bottom:.5px solid var(--border);flex-shrink:0}
+.chats-title{font-size:18px;font-weight:700}
+.chats-list{flex:1;overflow-y:auto;padding:8px 0}
+.chat-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:.5px solid var(--border);cursor:pointer;transition:.18s}
+.chat-item:hover{background:var(--surface)}
+.ci-av{width:48px;height:48px;border-radius:50%;flex-shrink:0;overflow:hidden;position:relative}
+.ci-av .unread{position:absolute;top:2px;right:2px;width:10px;height:10px;background:var(--accent);border-radius:50%;border:2px solid var(--bg)}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:15px;font-weight:700;margin-bottom:3px}
+.ci-last{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-time{font-size:11px;color:var(--dim);font-family:var(--font-mono);flex-shrink:0}
+
+/* ══════════════════════════════════
+   GAME / CHAT
+══════════════════════════════════ */
+#s-game{background:var(--bg)}
+.game-hdr{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border-bottom:.5px solid var(--border);flex-shrink:0}
+.ghdr-back{background:none;border:none;color:var(--muted);font-size:22px;padding:4px 8px 4px 0;transition:.2s}
+.ghdr-back:hover{color:var(--text)}
+.ghdr-av{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.ghdr-info{flex:1}
+.ghdr-name{font-size:15px;font-weight:700}
+.ghdr-status{font-size:11px;color:var(--ac3);font-family:var(--font-mono)}
+
+.game-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.game-body::-webkit-scrollbar{width:3px}
+.game-body::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+
+/* Scene illustration */
+.scene-card{border-radius:16px;overflow:hidden;border:.5px solid var(--border);flex-shrink:0}
+.scene-label{padding:10px 14px;background:var(--s2);display:flex;align-items:center;justify-content:space-between}
+.scene-label-txt{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-family:var(--font-mono)}
+.scene-sub-txt{font-size:10px;color:var(--muted);font-family:var(--font-mono)}
+
+/* Phone messages */
+.phone-ui{background:var(--s2);border:.5px solid var(--border);border-radius:20px;overflow:hidden;flex-shrink:0;max-width:340px;margin:0 auto;width:100%}
+.ph-hdr{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:.5px solid var(--border)}
+.ph-av{width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--s3)}
+.ph-name{font-size:14px;font-weight:700}
+.ph-st{font-size:11px;color:var(--ac3);font-family:var(--font-mono)}
+.ph-msgs{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.msg{display:flex;flex-direction:column}
+.msg.me{align-items:flex-end}
+.msg.them{align-items:flex-start}
+.msg-b{max-width:230px;padding:9px 13px;border-radius:18px;font-size:13px;line-height:1.5}
+.msg.them .msg-b{background:var(--bubble-them);color:#d0d0e8;border-bottom-left-radius:4px}
+.msg.me .msg-b{background:var(--bubble-me);color:#fff;border-bottom-right-radius:4px}
+.msg-t{font-size:10px;color:var(--dim);margin-top:3px;padding:0 4px;font-family:var(--font-mono)}
+.msg-sys{text-align:center;font-size:11px;color:var(--muted);padding:4px 0;font-family:var(--font-mono)}
+.typing-row{display:flex;align-items:center;gap:6px;padding:3px 0}
+.tdots{display:flex;gap:3px}
+.td{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:td 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}
+.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.typing-lbl{font-size:11px;color:var(--muted);font-family:var(--font-mono)}
+
+/* HQ block */
+.hq{background:var(--s2);border:.5px solid var(--border);border-radius:16px;padding:13px 15px;flex-shrink:0}
+.hq-ttl{font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-family:var(--font-mono);margin-bottom:9px}
+.hq-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:7px}
+.hq-row:last-child{margin-bottom:0}
+.hq-who{font-size:12px;font-weight:700;min-width:54px;flex-shrink:0}
+.hq-who.n{color:var(--gold)}
+.hq-who.d{color:var(--ac3)}
+.hq-who.dm{color:var(--ac2)}
+.hq-txt{font-size:13px;color:#b0b0cc;line-height:1.5}
+
+/* Choices */
+.choices{flex-shrink:0}
+.choices-ttl{font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-family:var(--font-mono);margin-bottom:9px}
+.choice{width:100%;background:var(--s2);border:.5px solid var(--border);border-radius:14px;padding:11px 15px;margin-bottom:7px;text-align:left;transition:.18s;color:var(--text)}
+.choice:hover{border-color:var(--accent);background:rgba(157,78,221,.08)}
+.choice:active{transform:scale(.98)}
+.choice:last-child{margin-bottom:0}
+.ch-key{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-family:var(--font-mono)}
+.ch-key.a{color:var(--accent)}
+.ch-key.b{color:var(--ac3)}
+.ch-key.c{color:var(--gold)}
+.ch-key.d{color:var(--ac2)}
+.ch-txt{font-size:13px;color:#c0c0d8;line-height:1.5}
+
+/* Result */
+.result-blk{background:var(--s2);border:.5px solid var(--border);border-radius:14px;padding:13px 15px;font-size:13px;line-height:1.7;color:#c0c0d8;flex-shrink:0}
+.result-ttl{font-size:10px;letter-spacing:1.5px;color:var(--accent);text-transform:uppercase;font-family:var(--font-mono);margin-bottom:7px}
+
+/* Loading */
+.ai-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;gap:12px;flex-shrink:0}
+.ai-loading-ring{width:36px;height:36px;border-radius:50%;border:2.5px solid var(--border);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-loading-txt{font-size:13px;color:var(--muted);font-family:var(--font-mono)}
+
+.next-btn{width:100%;background:linear-gradient(135deg,rgba(157,78,221,.15),rgba(255,79,160,.1));border:.5px solid var(--accent);border-radius:14px;padding:13px;color:var(--accent);font-weight:700;font-size:14px;transition:.2s;text-align:center;flex-shrink:0}
+.next-btn:hover{background:rgba(157,78,221,.25)}
+
+/* Ending */
+.ending{text-align:center;padding:32px 20px}
+.ending-em{font-size:52px;margin-bottom:16px}
+.ending-tt{font-size:22px;font-weight:800;margin-bottom:8px}
+.ending-tx{font-size:14px;color:#9090b0;line-height:1.7;margin-bottom:28px}
+
+/* Bottom nav */
+.bottom-nav{display:flex;align-items:center;background:var(--surface);border-top:.5px solid var(--border);flex-shrink:0}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;background:none;border:none;color:var(--muted);font-size:10px;font-family:var(--font-mono);transition:.2s;position:relative}
+.bnav-btn.on{color:var(--accent)}
+.bnav-icon{font-size:20px}
+.bnav-badge{position:absolute;top:6px;right:calc(50% - 16px);background:var(--accent);width:8px;height:8px;border-radius:50%}
+
+/* ══════════════════════════════════
+   PROFILE (Dimka)
+══════════════════════════════════ */
+#s-profile{background:var(--bg)}
+.profile-body{flex:1;overflow-y:auto;padding:0}
+.prof-hero{padding:28px 22px 18px;background:linear-gradient(180deg,rgba(157,78,221,.12),transparent);text-align:center;border-bottom:.5px solid var(--border)}
+.prof-av{width:110px;height:110px;border-radius:50%;margin:0 auto 14px;overflow:hidden;border:2px solid var(--accent);box-shadow:0 0 30px rgba(157,78,221,.3)}
+.prof-name{font-size:24px;font-weight:800;margin-bottom:4px}
+.prof-tag{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.prof-bio{font-size:13.5px;color:#b0b0d0;line-height:1.65;max-width:340px;margin:0 auto}
+.prof-section{padding:20px 22px;border-bottom:.5px solid var(--border)}
+.prof-h{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.prof-stat{background:var(--s2);border:.5px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
+.prof-stat-v{font-size:22px;font-weight:800;color:var(--accent);font-family:var(--font-ui)}
+.prof-stat-l{font-size:10px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.5px;margin-top:3px}
+.prof-traits{display:flex;flex-wrap:wrap;gap:7px}
+.prof-trait{font-size:11px;padding:5px 11px;border-radius:14px;background:var(--s2);border:.5px solid var(--border);color:var(--text);font-family:var(--font-mono)}
+.prof-trait.bad{color:var(--ac2);border-color:rgba(255,79,160,.3)}
+.prof-trait.good{color:var(--ac3);border-color:rgba(56,189,248,.3)}
+.prof-hq-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;background:var(--s2);border:.5px solid var(--border);border-radius:12px;padding:10px 12px}
+.prof-hq-row:last-child{margin-bottom:0}
+.prof-hq-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px}
+.prof-hq-info{flex:1;min-width:0}
+.prof-hq-name{font-size:13px;font-weight:700;margin-bottom:2px}
+.prof-hq-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.prof-meter{height:8px;background:var(--s2);border-radius:6px;overflow:hidden;margin-top:6px;border:.5px solid var(--border)}
+.prof-meter-fill{height:100%;background:linear-gradient(90deg,var(--ac2),var(--gold));transition:width .3s}
+.prof-meter-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-top:5px}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- INTRO -->
+<div id="s-intro" class="screen active">
+  <div class="intro-bg"></div>
+  <div class="intro-city">
+    <svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="180" fill="#07070f"/>
+      <circle cx="340" cy="28" r="22" fill="#fbbf24" opacity=".1"/><circle cx="340" cy="28" r="14" fill="#fbbf24" opacity=".15"/>
+      <circle cx="22" cy="14" r="1" fill="#fff" opacity=".7"/><circle cx="70" cy="8" r="1.5" fill="#fff" opacity=".6"/><circle cx="140" cy="12" r="1" fill="#fff" opacity=".5"/><circle cx="200" cy="6" r="1.5" fill="#fff" opacity=".7"/><circle cx="270" cy="10" r="1" fill="#fff" opacity=".6"/><circle cx="380" cy="18" r="1" fill="#fff" opacity=".5"/>
+      <rect x="0" y="80" width="45" height="100" fill="#0c0c1e"/><rect x="8" y="88" width="7" height="6" fill="#fbbf24" opacity=".5"/><rect x="20" y="88" width="7" height="6" fill="#9d4edd" opacity=".6"/><rect x="8" y="100" width="7" height="6" fill="#38bdf8" opacity=".4"/><rect x="20" y="100" width="7" height="6" fill="#fbbf24" opacity=".5"/>
+      <rect x="48" y="55" width="55" height="125" fill="#0e0e22"/><rect x="56" y="64" width="9" height="7" fill="#38bdf8" opacity=".5"/><rect x="72" y="64" width="9" height="7" fill="#fbbf24" opacity=".6"/><rect x="88" y="64" width="9" height="7" fill="#9d4edd" opacity=".5"/><rect x="56" y="78" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="72" y="78" width="9" height="7" fill="#38bdf8" opacity=".4"/><rect x="88" y="78" width="9" height="7" fill="#fbbf24" opacity=".5"/><rect x="56" y="92" width="9" height="7" fill="#fbbf24" opacity=".4"/><rect x="72" y="92" width="9" height="7" fill="#9d4edd" opacity=".5"/><rect x="88" y="92" width="9" height="7" fill="#38bdf8" opacity=".6"/>
+      <rect x="150" y="22" width="55" height="158" fill="#0c0c1c"/><rect x="196" y="12" width="4" height="14" fill="#9d4edd" opacity=".5"/><circle cx="198" cy="12" r="4" fill="#ff4fa0" opacity=".8"/><rect x="158" y="30" width="9" height="7" fill="#fbbf24" opacity=".7"/><rect x="173" y="30" width="9" height="7" fill="#38bdf8" opacity=".6"/><rect x="188" y="30" width="9" height="7" fill="#9d4edd" opacity=".5"/><rect x="158" y="44" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="173" y="44" width="9" height="7" fill="#fbbf24" opacity=".5"/><rect x="188" y="44" width="9" height="7" fill="#38bdf8" opacity=".7"/><rect x="158" y="58" width="9" height="7" fill="#38bdf8" opacity=".4"/><rect x="173" y="58" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="188" y="58" width="9" height="7" fill="#fbbf24" opacity=".5"/><rect x="158" y="72" width="9" height="7" fill="#fbbf24" opacity=".6"/><rect x="173" y="72" width="9" height="7" fill="#38bdf8" opacity=".5"/><rect x="188" y="72" width="9" height="7" fill="#9d4edd" opacity=".4"/>
+      <rect x="220" y="65" width="70" height="115" fill="#0d0d1e"/><rect x="228" y="73" width="9" height="7" fill="#38bdf8" opacity=".5"/><rect x="244" y="73" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="260" y="73" width="9" height="7" fill="#fbbf24" opacity=".4"/><rect x="276" y="73" width="9" height="7" fill="#38bdf8" opacity=".5"/><rect x="228" y="87" width="9" height="7" fill="#fbbf24" opacity=".5"/><rect x="244" y="87" width="9" height="7" fill="#38bdf8" opacity=".4"/><rect x="260" y="87" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="276" y="87" width="9" height="7" fill="#fbbf24" opacity=".3"/><rect x="228" y="101" width="9" height="7" fill="#9d4edd" opacity=".5"/><rect x="244" y="101" width="9" height="7" fill="#fbbf24" opacity=".6"/><rect x="260" y="101" width="9" height="7" fill="#38bdf8" opacity=".4"/><rect x="276" y="101" width="9" height="7" fill="#9d4edd" opacity=".5"/>
+      <rect x="300" y="45" width="100" height="135" fill="#0e0e20"/><rect x="308" y="53" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="324" y="53" width="9" height="7" fill="#fbbf24" opacity=".5"/><rect x="340" y="53" width="9" height="7" fill="#38bdf8" opacity=".4"/><rect x="356" y="53" width="9" height="7" fill="#9d4edd" opacity=".5"/><rect x="372" y="53" width="9" height="7" fill="#fbbf24" opacity=".6"/><rect x="308" y="67" width="9" height="7" fill="#38bdf8" opacity=".5"/><rect x="324" y="67" width="9" height="7" fill="#9d4edd" opacity=".4"/><rect x="340" y="67" width="9" height="7" fill="#fbbf24" opacity=".6"/><rect x="356" y="67" width="9" height="7" fill="#38bdf8" opacity=".3"/><rect x="372" y="67" width="9" height="7" fill="#9d4edd" opacity=".5"/><rect x="308" y="81" width="9" height="7" fill="#fbbf24" opacity=".4"/><rect x="324" y="81" width="9" height="7" fill="#38bdf8" opacity=".5"/><rect x="340" y="81" width="9" height="7" fill="#9d4edd" opacity=".6"/><rect x="356" y="81" width="9" height="7" fill="#fbbf24" opacity=".4"/><rect x="372" y="81" width="9" height="7" fill="#38bdf8" opacity=".5"/>
+      <rect x="110" y="150" width="4" height="30" fill="#1a1a2a"/><circle cx="112" cy="148" r="6" fill="#fbbf24" opacity=".4"/><rect x="285" y="145" width="4" height="35" fill="#1a1a2a"/><circle cx="287" cy="143" r="6" fill="#fbbf24" opacity=".4"/>
+      <rect x="0" y="170" width="400" height="10" fill="#0a0a14"/>
+      <rect x="105" y="171" width="14" height="5" fill="#fbbf24" opacity=".12"/><rect x="280" y="171" width="14" height="5" fill="#fbbf24" opacity=".12"/>
+    </svg>
+  </div>
+  <div class="logo"><span>D</span>.<span>I</span>.<span>M</span>.<span>K</span>.<span>A</span>.</div>
+  <div class="tagline">"Склеить и не закурить" · Висбаден, 2026</div>
+  <button class="start-btn" onclick="goTo('dating')">Начать игру</button>
+</div>
+
+<!-- DATING APP -->
+<div id="s-dating" class="screen">
+  <div class="dating-bar">
+    <span class="dating-logo">DIMKA.APP</span>
+    <div class="dating-icons">
+      <span onclick="goTo('chats')" title="Чаты">💬</span>
+      <span onclick="goTo('profile')" title="Профиль">👤</span>
+    </div>
+  </div>
+  <div class="tab-row">
+    <button class="tab on">Для тебя</button>
+  </div>
+  <div class="card-area">
+    <div id="pcard" class="pcard"></div>
+  </div>
+  <div class="actions">
+    <button class="act nope" onclick="swipe('l')">✕</button>
+    <button class="act super" onclick="swipe('super')">⭐</button>
+    <button class="act like" onclick="swipe('r')">♥</button>
+  </div>
+  <div class="bottom-nav">
+    <button class="bnav-btn on" onclick="goTo('dating')"><span class="bnav-icon">🔥</span>Свайпы</button>
+    <button class="bnav-btn" onclick="goTo('chats')"><span class="bnav-icon">💬</span>Чаты</button>
+    <button class="bnav-btn" onclick="goTo('profile')"><span class="bnav-icon">👤</span>Профиль</button>
+  </div>
+</div>
+
+<!-- MATCH OVERLAY -->
+<div id="match-ov" class="match-ov">
+  <div class="m-emoji">💜</div>
+  <div class="m-title" id="m-title"></div>
+  <div class="m-sub" id="m-sub"></div>
+  <button class="m-btn" onclick="openNewChat()">Написать ей</button>
+  <button class="m-btn sec" onclick="closeMatch()">Продолжить листать</button>
+</div>
+
+<!-- CHATS LIST -->
+<div id="s-chats" class="screen">
+  <div class="chats-bar">
+    <span class="chats-title">Чаты</span>
+    <span style="color:var(--muted);font-size:13px;cursor:pointer" onclick="goTo('dating')">+ Найти</span>
+  </div>
+  <div id="chats-list" class="chats-list"></div>
+  <div class="bottom-nav">
+    <button class="bnav-btn" onclick="goTo('dating')"><span class="bnav-icon">🔥</span>Свайпы</button>
+    <button class="bnav-btn on" onclick="goTo('chats')"><span class="bnav-icon">💬</span>Чаты</button>
+    <button class="bnav-btn" onclick="goTo('profile')"><span class="bnav-icon">👤</span>Профиль</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div id="s-profile" class="screen">
+  <div class="chats-bar">
+    <span class="chats-title">Профиль</span>
+    <span style="color:var(--muted);font-size:13px;cursor:pointer" onclick="goTo('dating')">×</span>
+  </div>
+  <div id="profile-body" class="profile-body"></div>
+  <div class="bottom-nav">
+    <button class="bnav-btn" onclick="goTo('dating')"><span class="bnav-icon">🔥</span>Свайпы</button>
+    <button class="bnav-btn" onclick="goTo('chats')"><span class="bnav-icon">💬</span>Чаты</button>
+    <button class="bnav-btn on" onclick="goTo('profile')"><span class="bnav-icon">👤</span>Профиль</button>
+  </div>
+</div>
+
+<!-- GAME / CHAT -->
+<div id="s-game" class="screen">
+  <div class="game-hdr">
+    <button class="ghdr-back" onclick="goTo('chats')">←</button>
+    <div class="ghdr-av" id="gh-av"></div>
+    <div class="ghdr-info">
+      <div class="ghdr-name" id="gh-name"></div>
+      <div class="ghdr-status" id="gh-status">● онлайн</div>
+    </div>
+  </div>
+  <div class="game-body" id="game-body"></div>
+</div>
+
+</div><!-- /root -->
+
+<script>
+/* ════════════════════════════════════════
+   GIRL PROFILES
+════════════════════════════════════════ */
+const GIRLS = [
+  {
+    id:'vika', name:'Виктория', age:26, job:'UX-дизайнер',
+    city:'Висбаден', dist:'1.2 км',
+    tags:['📍 Висбаден','🎨 Дизайн','✈️ Путешествия','🐈 Котики','☕ Кофе'],
+    bio:'Делаю интерфейсы днём, смотрю Нетфликс ночью. Люблю спонтанные поездки и хороший кофе в правильной компании.',
+    prompts:[{q:'Идеальные выходные',a:'Рынок с утра, кофейня, вечером бокал вина где-нибудь с видом'},{q:'Тебя не знают, что...',a:'Я могу цитировать весь Офис наизусть. Это и дар, и проклятие.'}],
+    col:'#7c3aed', letter:'В',
+    personality:'Умная, ироничная, ценит юмор и конкретику. Отвечает быстро, если интересно. Может стать холодной если почует давление или скуку.',
+    archetype:'intellectual_cozy'
+  },
+  {
+    id:'alina', name:'Алина', age:24, job:'Фитнес-тренер',
+    city:'Майнц', dist:'8 км',
+    tags:['💪 Gym life','🌱 ЗОЖ','📍 Майнц','🎵 Техно','🏃 Бег'],
+    bio:'Поднимаю людей с диванов и штангу. Техно-вечеринки по пятницам — это терапия. Не ищу серьёзного, ищу настоящего.',
+    prompts:[{q:'Самая странная привычка',a:'Считаю ступеньки в каждом здании. Автоматически.'},{q:'Приди со...',a:'Хорошим настроением и без заготовленных вопросов'}],
+    col:'#be185d', letter:'А',
+    personality:'Прямая, энергичная, ценит честность и юмор. Не терпит нытиков. Легко отключается если скучно.',
+    archetype:'gym_confident'
+  },
+  {
+    id:'masha', name:'Маша', age:27, job:'Иллюстратор',
+    city:'Висбаден', dist:'0.8 км',
+    tags:['🎨 Иллюстрации','📚 Книги','☕ Кофе','🌙 Ночная сова','🐾 Кошки'],
+    bio:'Рисую людей и города. Читаю слишком много. Люблю длинные разговоры и плохое вино в хорошей компании.',
+    prompts:[{q:'Выдай с первой секунды',a:'Всегда замечаю руки у людей. Это первое что вижу.'},{q:'Нетипично для меня...',a:'Обожаю ужастики. Все думают художники смотрят артхаус.'}],
+    col:'#0369a1', letter:'М',
+    personality:'Глубокая, наблюдательная, ценит настоящесть. Может долго молчать, потом написать что-то неожиданное.',
+    archetype:'artsy_deep'
+  },
+  {
+    id:'kate', name:'Катя', age:25, job:'Маркетолог / Инфлюенсер',
+    city:'Франкфурт', dist:'40 км',
+    tags:['✨ Lifestyle','📸 Контент','🌍 Путешествия','🍷 Вино','💅 Эстетика'],
+    bio:'Продвигаю бренды и себя одновременно. Жизнь — это контент, и это нормально. Ищу человека с энергией, не диванного.',
+    prompts:[{q:'Моя суперсила',a:'Всегда найду лучший ресторан в незнакомом городе за 10 минут'},{q:'Честно про себя',a:'Я могу казаться поверхностной. Я не поверхностная. Просто люблю красивое.'}],
+    col:'#c2410c', letter:'К',
+    personality:'Яркая, уверенная, ценит стиль и конкретику. Много лайков — не значит легкодоступна. Тест на реальность.',
+    archetype:'influencer_luxury'
+  },
+  {
+    id:'dasha', name:'Даша', age:23, job:'Студентка / Баристо',
+    city:'Висбаден', dist:'2.1 км',
+    tags:['☕ Кофе','🎮 Геймер','🎵 Инди','📚 Учёба','🐶 Собаки'],
+    bio:'Варю кофе и готовлюсь к экзаменам. Гейминг по ночам — это не хобби, это образ жизни. Если напишешь «привет», удалю.',
+    prompts:[{q:'Ищу человека который...',a:'Не задаёт вопросы из анкеты. И не пишет только привет.'},{q:'Последнее что проходила',a:'Celeste. Плакала на последнем боссе. Это нормально?'}],
+    col:'#065f46', letter:'Д',
+    personality:'Остроумная, ленивая-но-умная, ценит нестандартный подход. Сразу отфильтровывает скучных.',
+    archetype:'gamer_indie'
+  },
+  {
+    id:'sofi', name:'Софи', age:28, job:'Врач / Терапевт',
+    city:'Висбаден', dist:'3.4 км',
+    tags:['🏥 Медицина','🧘 Йога','📖 Non-fiction','🍃 Природа','🌊 Море'],
+    bio:'Помогаю людям, потом иду домой и смотрю мемы. Умею слушать — это профессиональное. Ищу человека с которым можно молчать.',
+    prompts:[{q:'Что меня восстанавливает',a:'Час в тишине с книгой и чаем. Никаких уведомлений.'},{q:'Не типичный врач потому что...',a:'Обожаю дурацкие игры на вечеринках. Особенно данетки.'}],
+    col:'#1e3a5f', letter:'С',
+    personality:'Спокойная, глубокая, ценит зрелость и присутствие. Не реагирует на форсирование. Тёплая но с границами.',
+    archetype:'calm_mature'
+  }
+];
+
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+const S = {
+  cardIdx: 0,
+  chats: {},        // girlId -> { girl, history, phase, relationScore, scenes }
+  activeChat: null,
+  pendingMatch: null,
+  swipes: { likes: 0, nopes: 0, supers: 0 },
+  cigarettes: 0
+};
+
+/* ════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════ */
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('s-'+screen);
+  if (!el) { document.getElementById('s-dating').classList.add('active'); return; }
+  el.classList.add('active');
+  if (screen === 'chats') renderChatsList();
+  if (screen === 'profile') renderProfile();
+}
+
+/* ════════════════════════════════════════
+   PIXEL ART GENERATOR
+════════════════════════════════════════ */
+function cityBg(w,h,seed){
+  const rng=(n)=>{let x=Math.sin(seed*9301+n*49297)*233280;return x-Math.floor(x)};
+  const cols=['#9d4edd','#38bdf8','#fbbf24','#ff4fa0','#a78bfa'];
+  let s=`<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="${w}" height="${h}" fill="#07070f"/>`;
+  for(let i=0;i<12;i++){
+    const cx=rng(i)*w,cy=rng(i+1)*h*.6;
+    s+=`<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${(rng(i+2)*2+.5).toFixed(1)}" fill="#fff" opacity="${(.4+rng(i+3)*.5).toFixed(2)}"/>`;
+  }
+  const nb=5+Math.floor(rng(20)*4);
+  for(let b=0;b<nb;b++){
+    const bx=rng(b*3)*w,bw=20+rng(b*3+1)*50,bh=30+rng(b*3+2)*100;
+    const by=h-bh,bc=['#0c0c1e','#0e0e22','#0d0d1c','#0f0f20'][b%4];
+    s+=`<rect x="${bx.toFixed(0)}" y="${by.toFixed(0)}" width="${bw.toFixed(0)}" height="${bh.toFixed(0)}" fill="${bc}"/>`;
+    const winRows=Math.floor(bh/14),winCols=Math.floor(bw/12);
+    for(let r=0;r<winRows;r++)for(let c=0;c<winCols;c++){
+      if(rng(b*100+r*10+c)>.35){
+        const wx=bx+4+c*12,wy=by+4+r*14,wc=cols[Math.floor(rng(b*100+r*10+c+1)*cols.length)];
+        s+=`<rect x="${wx.toFixed(0)}" y="${wy.toFixed(0)}" width="7" height="5" fill="${wc}" opacity="${(.3+rng(b*100+r*10+c+2)*.5).toFixed(2)}"/>`;
+      }
+    }
+  }
+  s+=`<rect x="0" y="${h-8}" width="${w}" height="8" fill="#080812"/>`;
+  s+='</svg>';return s;
+}
+
+function girlPixelArt(girl){
+  const c=girl.col;
+  const seed=girl.id.split('').reduce((a,ch)=>a+ch.charCodeAt(0),0);
+  const rng=(n)=>{let x=Math.sin(seed*137+n*31)*4096;return x-Math.floor(x)};
+  const skinTones=['#d4956e','#c87858','#c8a882','#b87040','#e0b090'];
+  const skin=skinTones[seed%skinTones.length];
+  const hairCols=['#1a0a04','#0a0808','#2a1a0a','#3a2010','#1a1a1a'];
+  const hair=hairCols[(seed+1)%hairCols.length];
+  const bg=cityBg(280,280,seed*0.1);
+  return `<svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+    <image href="data:image/svg+xml,${encodeURIComponent(bg)}" width="280" height="280"/>
+    <ellipse cx="140" cy="140" rx="90" ry="100" fill="${c}" opacity=".06"/>
+    <ellipse cx="140" cy="200" rx="70" ry="40" fill="#1a1a32"/>
+    <ellipse cx="140" cy="100" rx="52" ry="58" fill="${hair}"/>
+    <ellipse cx="${88+rng(1)*10}" cy="128" rx="20" ry="${35+rng(2)*10}" fill="${hair}"/>
+    <ellipse cx="${192-rng(3)*10}" cy="128" rx="20" ry="${35+rng(4)*10}" fill="${hair}"/>
+    <ellipse cx="140" cy="118" rx="42" ry="46" fill="${skin}"/>
+    <rect x="128" y="156" width="24" height="22" fill="${skin}"/>
+    <ellipse cx="122" cy="112" rx="11" ry="8" fill="white"/><ellipse cx="158" cy="112" rx="11" ry="8" fill="white"/>
+    <ellipse cx="124" cy="113" rx="7" ry="6" fill="#2a1010"/><ellipse cx="160" cy="113" rx="7" ry="6" fill="#2a1010"/>
+    <circle cx="125" cy="112" r="4" fill="#0a0505"/><circle cx="161" cy="112" r="4" fill="#0a0505"/>
+    <circle cx="127" cy="110" r="1.5" fill="white"/><circle cx="163" cy="110" r="1.5" fill="white"/>
+    <rect x="114" y="104" width="18" height="3" fill="#2a1010" rx="1.5" opacity=".8"/>
+    <rect x="148" y="104" width="18" height="3" fill="#2a1010" rx="1.5" opacity=".8"/>
+    <ellipse cx="140" cy="140" rx="12" ry="5.5" fill="#c05860"/>
+    <rect x="128" y="139" width="24" height="3.5" fill="#a04050" rx="1.5"/>
+    <rect x="75" y="176" width="130" height="104" fill="${c}22" rx="8"/>
+    <rect x="95" y="178" width="90" height="6" fill="${c}44" rx="3"/>
+    <circle cx="104" cy="138" r="3" fill="${c}" opacity=".7"/>
+    <circle cx="176" cy="138" r="3" fill="${c}" opacity=".7"/>
+  </svg>`;
+}
+
+function smallAvatar(girl, size=40){
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${size}" height="${size}" fill="${girl.col}" rx="${size/2}"/>
+    <text x="${size/2}" y="${size/2+6}" text-anchor="middle" font-size="${size*0.4}" fill="white" font-family="sans-serif" font-weight="700">${girl.letter}</text>
+  </svg>`;
+}
+
+/* ════════════════════════════════════════
+   DATING CARD RENDER
+════════════════════════════════════════ */
+function renderCard(){
+  const el=document.getElementById('pcard');
+  el.className='pcard';
+  if(S.cardIdx>=GIRLS.length){
+    el.innerHTML=`<div class="no-more"><div style="font-size:36px;margin-bottom:14px">😮‍💨</div>Всё просмотрено.<br><br><button onclick="S.cardIdx=0;renderCard()" style="background:var(--accent);border:none;border-radius:12px;padding:12px 28px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-ui)">Начать сначала</button></div>`;
+    return;
+  }
+  const g=GIRLS[S.cardIdx];
+  const tags=g.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  const prompts=g.prompts.map(p=>`<div class="cprompt"><div class="cprompt-q">${p.q}</div><div class="cprompt-a">${p.a}</div></div>`).join('');
+  el.innerHTML=`<div class="card-art">${girlPixelArt(g)}</div>
+    <div class="card-info">
+      <div class="card-name-row"><span class="card-name">${g.name}</span><span class="card-age">${g.age}</span></div>
+      <div class="card-tags">${tags}<span class="tag">💼 ${g.job}</span><span class="tag">📍 ${g.dist}</span></div>
+      <div class="card-bio">${g.bio}</div>
+      <div class="card-prompts">${prompts}</div>
+    </div>`;
+}
+
+function swipe(dir){
+  const el=document.getElementById('pcard');
+  const g=GIRLS[S.cardIdx];
+  if(!g) return;
+  el.classList.add(dir==='l'?'gone-l':'gone-r');
+  if(dir==='l') S.swipes.nopes++;
+  else if(dir==='super') S.swipes.supers++;
+  else S.swipes.likes++;
+  setTimeout(()=>{
+    S.cardIdx++;
+    if(dir!=='l'){showMatch(g);}
+    else{renderCard();}
+  },320);
+}
+
+/* ════════════════════════════════════════
+   MATCH
+════════════════════════════════════════ */
+function showMatch(girl){
+  S.pendingMatch=girl;
+  document.getElementById('m-title').textContent=`Мэтч с ${girl.name}!`;
+  document.getElementById('m-sub').textContent=`${girl.name} тоже лайкнула тебя.\nНапиши первым — она онлайн.`;
+  document.getElementById('match-ov').classList.add('show');
+}
+function closeMatch(){
+  document.getElementById('match-ov').classList.remove('show');
+  renderCard();
+}
+function openNewChat(){
+  document.getElementById('match-ov').classList.remove('show');
+  const g=S.pendingMatch;
+  if(!S.chats[g.id]){
+    S.chats[g.id]={
+      girl:g, phase:'opening', relationScore:50,
+      history:[], msgHistory:[],
+      scenes:[], sceneIdx:0,
+      flags:{}, cigarettes:0
+    };
+  }
+  S.activeChat=g.id;
+  renderCard();
+  goTo('game');
+  loadScene();
+}
+
+/* ════════════════════════════════════════
+   CHATS LIST
+════════════════════════════════════════ */
+function renderChatsList(){
+  const el=document.getElementById('chats-list');
+  const keys=Object.keys(S.chats);
+  if(!keys.length){
+    el.innerHTML=`<div style="text-align:center;padding:60px 24px;color:var(--muted);font-size:14px">Пока нет чатов.<br>Лайкни кого-нибудь!</div>`;
+    return;
+  }
+  el.innerHTML=keys.map(id=>{
+    const ch=S.chats[id];
+    const g=ch.girl;
+    const last=ch.msgHistory.length?ch.msgHistory[ch.msgHistory.length-1].content:'Мэтч! Начни разговор...';
+    const lastShort=last.length>40?last.slice(0,37)+'...':last;
+    return `<div class="chat-item" onclick="openChat('${id}')">
+      <div class="ci-av">${smallAvatar(g,48)}</div>
+      <div class="ci-info">
+        <div class="ci-name">${g.name}</div>
+        <div class="ci-last">${lastShort}</div>
+      </div>
+      <div class="ci-time">сейчас</div>
+    </div>`;
+  }).join('');
+}
+
+function openChat(id){
+  S.activeChat=id;
+  const ch=S.chats[id];
+  setupGameHeader(ch.girl);
+  goTo('game');
+  const body=document.getElementById('game-body');
+  body.innerHTML='';
+  if(ch.scenes.length===0) loadScene();
+  else resumeScene(ch);
+}
+
+/* ════════════════════════════════════════
+   GAME HEADER
+════════════════════════════════════════ */
+function setupGameHeader(girl){
+  document.getElementById('gh-av').innerHTML=smallAvatar(girl,36);
+  document.getElementById('gh-name').textContent=girl.name;
+  document.getElementById('gh-status').textContent='● онлайн';
+}
+
+/* ════════════════════════════════════════
+   AI ENGINE — CLAUDE POWERS SCENES
+════════════════════════════════════════ */
+async function callClaude(systemPrompt, userMsg){
+  const resp=await fetch('/api/chat',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system:systemPrompt,
+      user:userMsg,
+      max_tokens:4096
+    })
+  });
+  if(!resp.ok){
+    const err=await resp.json().catch(()=>({error:'network'}));
+    throw new Error(err.error||'api_error');
+  }
+  const d=await resp.json();
+  return d.text||'';
+}
+
+function getSystemPrompt(ch){
+  const g=ch.girl;
+  const histSummary=ch.history.length>0?`История игры:\n${ch.history.slice(-8).map(h=>`[${h.scene}] Игрок: ${h.choice} → Результат: ${h.outcome}`).join('\n')}`:'Это начало игры.';
+  const flags=Object.keys(ch.flags).length?`Флаги состояния: ${JSON.stringify(ch.flags)}`:'';
+  return `Ты — AI-движок игры PROJECT D.I.M.K.A. Генерируй сцены интерактивного dating simulator в Висбадене, 2026 год.
+
+ДЕВУШКА: ${g.name}, ${g.age} лет, ${g.job}. ${g.personality}
+БИОГРАФИЯ: ${g.bio}
+АРХЕТИП: ${g.archetype}
+ФАЗА ОТНОШЕНИЙ: ${ch.phase} (opening → texting → date_setup → date → afterdate → deep)
+ОЧКИ ОТНОШЕНИЙ: ${ch.relationScore}/100
+
+${histSummary}
+${flags}
+
+ПРАВИЛА:
+- Игрок играет за Димку (живой, тревожный, смешной, добрый, хочет бросить курить)
+- Советники: Никита (дерзко, коротко, к действию), Дэн (стратег, конкретика, мемный), Никотиновый демон (соблазняет на перекур)
+- Каждая сцена: уникальное название, кинематографичное описание, диалог в мессенджере, внутренний монолог Димки, советники, 4 варианта выбора
+- ВАРИАНТЫ: A=уверенный, B=нормальный, C=рискованный/странный, D=кринжовый-но-иногда-работает
+- Игра ИМЕЕТ ФИНАЛ. Длительность — 15-25 сцен. Не растягивай бесконечно: к 12-й сцене явно веди к развязке, к 18-й — обязательно финал.
+- Прогресс по фазам: opening (3-4 сцены) → texting (3-4) → date_setup (2-3) → date (4-6) → afterdate (2-3) → deep/финал. После каждой фазы СМЕНИ phase.
+- Варианты выбора ВЛИЯЮТ на дальнейший ход: плохие выборы → девушка охладевает → возможен отказ/расставание; хорошие → развитие, свидание, близость
+- ВОЗМОЖНЫЕ ВЕТКИ И ФИНАЛЫ:
+  ПОЗИТИВНЫЕ: kiss (поцелуй в такси/у дома), sex_implied (секс — атмосфера, утро, без эксплицита), home_together (она зовёт к себе), morning_after (проснулись вместе), second_date (договорились о новой встрече), success_date (отличный вечер, без секса)
+  СРЕДНИЕ: friends (френдзона, "ты классный, но..."), soft_end (красиво но не срослось)
+  НЕГАТИВНЫЕ: rejected (отказ от свидания), walked_away (ушла со свидания), ghosted (молча пропала), told_off (послала нахуй прямо в чат) — последнее при низком скоре + кринжовых выборах
+  СПЕЦИАЛЬНЫЕ: smoked_out (Димка скурился вместо момента — закурил во время разговора/свидания, демон победил), drunk_disaster (упился до такого что всё разрушил), morning_regret (проснулись вместе, но утром стало неловко и она сбежала)
+- НИКОТИНОВАЯ МЕХАНИКА:
+  • Демон в hq РЕГУЛЯРНО искушает (это его роль) — но это НЕ значит что Димка закурил. Демон может говорить "одну сигаретку?" каждую сцену, и это НОРМАЛЬНО.
+  • Димка ФАКТИЧЕСКИ курит ТОЛЬКО когда выбор игрока явно про это (например D="перерыв на сигарету" или C="выйду покурю") И этот выбор приведён в действие.
+  • Если в этой сцене Димка реально закурил (затянулся, вышел на перекур, достал сигарету) — ОБЯЗАТЕЛЬНО добавь в result поле "smoked": true. Если нет — "smoked": false (или не добавляй).
+  • При ch.cigarettes >= 4 (передаётся в инструкции) финал ОБЯЗАТЕЛЬНО smoked_out.
+  • НЕ делай чтобы Димка курил случайно от каждой плохой реакции девушки. Курение — это активный выбор игрока, не наказание за низкий скор.
+- Стиль диалогов: живой, чатовый, с украинско-русским вайбом. МАТ ВКЛЮЧЁН — и у друзей, и у девушек когда злы. Если выбор был кринжовый/неуважительный → девушка может ответить резко: "иди нахуй", "ты серьезно?", "удали меня нахуй", "не пиши больше". Это ИГРА ВЗРОСЛАЯ, не sanitize. Девушки — живые, могут злиться, посылать, исчезать без слова.
+- РЕАЛИЗМ ПОВЕДЕНИЯ: при relationScore<35 — холодные сухие ответы, "ок", "понятно", долгие паузы. При <20 — открытое раздражение, мат, угроза удалить. При <10 — уже послала и заблокировала. При >70 — игривость, флирт, инициатива от неё. При >85 — открытый интерес, приглашает к себе, тактильность.
+- НЕ показывай номера сцен заранее. Не говори сколько сцен осталось.
+- Каждая фаза состоит из 5-10+ под-сцен с разными развилками.
+
+КРИТИЧНО ДЛЯ ОТКРЫТИЯ ЧАТА (фаза opening):
+- ПЕРВОЕ сообщение в girlMessages ВСЕГДА должно быть ПРИВЕТСТВИЕМ — либо от девушки ("Привет!", "хай", "ну привет 👋", "Хелоу"), либо системное "Вы установили мэтч" + от Димки ("Привет, ${g.name}!").
+- НЕ начинай чат с середины разговора, шуток про прошлое, отсылок к старым событиям — они только что мэтчнулись и НЕ ЗНАКОМЫ.
+- Первая сцена — это знакомство с нуля. Никаких "помнишь как мы...", "ты вчера сказала..."
+- 2-4 сообщения максимум в первой сцене (приветствие + 1-2 фразы, чтобы Димке было что выбирать).
+
+КРИТИЧНО: girlMessages, hq, hqReaction, choices — ВСЕГДА массивы ОБЪЕКТОВ (не строки, не массивы строк). Если это правило нарушено — ответ невалиден.
+
+ФОРМАТ ОТВЕТА (строго JSON, без markdown):
+{
+  "sceneTitle": "Название сцены",
+  "phase": "текущая фаза",
+  "visual": "кинематографичное описание 2-3 предложения",
+  "artType": "evening_room|night_city|cafe|date_walk|date_bar|afterdate|morning_after|breakup",
+  "girlMessages": [{"from":"them","text":"сообщение"} или {"from":"system","text":"системное"}],
+  "inner": "внутренний монолог Димки 1-2 предложения",
+  "hq": [{"who":"n","name":"Никита","text":"..."}, {"who":"d","name":"Дэн","text":"..."}, {"who":"dm","name":"Демон","text":"..."}],
+  "choices": [
+    {"key":"a","text":"конкретная реплика или действие"},
+    {"key":"b","text":"..."},
+    {"key":"c","text":"..."},
+    {"key":"d","text":"..."}
+  ],
+  "endScene": false
+}
+
+Если сцена — финальная для данного пути (концовка), установи endScene:true и добавь поля:
+"endingType": "success_date|kiss|home_together|soft_end|rejected|walked_away|ghosted|friends|sex_implied|morning_after|second_date|...",
+"endingText": "кинематографичный финальный абзац 3-5 предложений"`;
+}
+
+function getScenePrompt(ch, playerChoice=null){
+  if(playerChoice){
+    return `Игрок выбрал: "${playerChoice.text}" (вариант ${playerChoice.key.toUpperCase()}).
+Сгенерируй РЕЗУЛЬТАТ этого выбора И следующую сцену.
+Учитывай: ${playerChoice.key==='a'?'хороший ход, отношения улучшаются':''}${playerChoice.key==='b'?'нейтральный ход':''}${playerChoice.key==='c'?'рискованно, может удивить или смутить':''}${playerChoice.key==='d'?'кринжово, может сработать или нет':''}
+Верни JSON с полями result (что произошло, реакция девушки, реакция штаба) и next (следующая сцена в том же формате).`;
+  }
+  return `Сгенерируй ПЕРВУЮ сцену чата. Это МОМЕНТ ПОСЛЕ МЭТЧА — Димка и ${ch.girl.name} ещё ни слова друг другу не сказали.
+
+ОБЯЗАТЕЛЬНО:
+- girlMessages начинается с системного "У вас мэтч с ${ch.girl.name}" (from:"system"), затем ПЕРВОЕ настоящее сообщение — это ПРИВЕТСТВИЕ. Либо от неё ("Привет!" / "хай" / "ну привет 👋" — что-то одно короткое, в её стиле), либо от Димки (from:"me", тоже приветствие).
+- Если девушка приветствует первой — Димке нужно ответить, поэтому в choices будут варианты ответа на приветствие.
+- Если Димка приветствует первым — девушка ещё не ответила, и в choices будут варианты "что сказать дальше / какую тему".
+- НЕ ВРЫВАЙСЯ в середину диалога. Никакого "помнишь...", "вчера...", "как тогда..." — они только что познакомились через приложение.
+- artType: "evening_room"
+- phase: "opening"
+- 2-4 сообщения в girlMessages. Не больше.`;
+}
+
+/* ════════════════════════════════════════
+   SCENE RENDERING
+════════════════════════════════════════ */
+function getArt(type,seed=42){
+  const arts={
+    evening_room:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#08080f"/><rect x="20" y="10" width="160" height="120" fill="#0d0d1e" rx="3"/><rect x="25" y="15" width="150" height="110" fill="#0f0f28" rx="2"/>${cityBg(150,110,seed).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'').replace(/viewBox="[^"]*"/,'').replace(/xmlns="[^"]*"/,'')}<rect x="220" y="25" width="120" height="100" fill="#111122" rx="16"/><rect x="226" y="34" width="108" height="84" fill="#0a0a1e" rx="10"/><rect x="234" y="44" width="92" height="20" fill="#1a1a30" rx="6"/><rect x="238" y="50" width="60" height="4" fill="#e0e0f0" opacity=".6" rx="2"/><rect x="234" y="72" width="80" height="16" fill="#5b21b6" opacity=".8" rx="8"/><rect x="238" y="78" width="55" height="4" fill="white" opacity=".6" rx="2"/><ellipse cx="80" cy="128" rx="32" ry="12" fill="#c8a070" opacity=".5"/><ellipse cx="300" cy="128" rx="32" ry="12" fill="#c8a070" opacity=".5"/><rect x="20" y="130" width="60" height="6" fill="#181828" rx="2"/><rect x="22" y="132" width="40" height="2" fill="#fbbf24" opacity=".2" rx="1"/></svg>`,
+    night_city:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#05050d"/>${cityBg(360,130,seed+1).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'').replace(/viewBox="[^"]*"/,'').replace(/xmlns="[^"]*"/,'')}</svg>`,
+    cafe:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#0a0a18"/><rect x="0" y="70" width="360" height="70" fill="#0c0c20"/><rect x="30" y="15" width="100" height="80" fill="#0f0f24" rx="3"/><rect x="36" y="20" width="88" height="70" fill="#12122a"/><rect x="42" y="26" width="20" height="16" fill="#181830" rx="2"/><rect x="66" y="26" width="20" height="16" fill="#181830" rx="2"/><rect x="90" y="26" width="22" height="16" fill="#181830" rx="2"/><rect x="42" y="47" width="20" height="16" fill="#181830" rx="2"/><rect x="66" y="47" width="20" height="16" fill="#fbbf24" opacity=".3" rx="2"/><rect x="90" y="47" width="22" height="16" fill="#181830" rx="2"/><rect x="42" y="68" width="70" height="16" fill="#9d4edd" opacity=".2" rx="2"/><rect x="160" y="30" width="60" height="70" fill="#0e0e22" rx="4"/><rect x="165" y="36" width="50" height="58" fill="#12122c"/><rect x="170" y="50" width="40" height="30" fill="#fbbf24" opacity=".08"/><text x="190" y="72" text-anchor="middle" font-size="8" fill="#fbbf24" opacity=".5" font-family="monospace">CAFÉ</text><rect x="240" y="25" width="100" height="90" fill="#0d0d20" rx="6"/><rect x="248" y="80" width="22" height="30" fill="#0a0a18" rx="3"/><rect x="252" y="75" width="14" height="6" fill="#c8a070" rx="2"/><ellipse cx="259" cy="88" rx="8" ry="4" fill="#7c3aed" opacity=".3"/><rect x="282" y="75" width="22" height="35" fill="#0a0a18" rx="3"/><rect x="286" y="70" width="14" height="6" fill="#c8a070" rx="2"/><rect x="110" y="120" width="140" height="4" fill="#1a1a2a" rx="2"/></svg>`,
+    date_walk:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#070712"/>${cityBg(360,100,seed+2).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'').replace(/viewBox="[^"]*"/,'').replace(/xmlns="[^"]*"/,'')}<rect x="0" y="105" width="360" height="35" fill="#0a0a18"/><rect x="0" y="105" width="360" height="3" fill="#141430"/><rect x="80" y="80" width="4" height="28" fill="#14142a"/><circle cx="82" cy="78" r="7" fill="#fbbf24" opacity=".45"/><rect x="260" y="75" width="4" height="33" fill="#14142a"/><circle cx="262" cy="73" r="7" fill="#fbbf24" opacity=".45"/><ellipse cx="140" cy="110" rx="12" ry="22" fill="#0d0d1e"/><ellipse cx="190" cy="112" rx="10" ry="20" fill="#0d0d1e"/><rect x="130" y="108" width="70" height="4" fill="#9d4edd" opacity=".08"/></svg>`,
+    date_bar:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#080810"/><rect x="0" y="80" width="360" height="60" fill="#0c0c1c"/><rect x="0" y="80" width="360" height="4" fill="#1a1a2e"/><rect x="20" y="40" width="80" height="60" fill="#0e0e20" rx="3"/><rect x="28" y="48" width="14" height="20" fill="#181830" rx="2"/><rect x="46" y="48" width="14" height="20" fill="#9d4edd" opacity=".25" rx="2"/><rect x="64" y="48" width="22" height="20" fill="#fbbf24" opacity=".2" rx="2"/><rect x="28" y="74" width="60" height="16" fill="#0a0a18" rx="2"/><rect x="180" y="30" width="160" height="70" fill="#0e0e1e" rx="4"/><rect x="188" y="38" width="144" height="55" fill="#0c0c1c"/><rect x="195" y="90" width="30" height="30" fill="#0a0a16" rx="3"/><ellipse cx="210" cy="88" rx="10" ry="4" fill="#38bdf8" opacity=".25"/><rect x="240" y="88" width="30" height="32" fill="#0a0a16" rx="3"/><ellipse cx="255" cy="86" rx="10" ry="4" fill="#ff4fa0" opacity=".2"/><rect x="280" y="90" width="24" height="30" fill="#0a0a16" rx="3"/><ellipse cx="292" cy="88" rx="8" ry="4" fill="#9d4edd" opacity=".3"/><rect x="100" y="118" width="160" height="4" fill="#1a1a2a" rx="2"/></svg>`,
+    afterdate:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#06060e"/><circle cx="180" cy="40" r="30" fill="#fbbf24" opacity=".06"/><circle cx="180" cy="40" r="18" fill="#fbbf24" opacity=".08"/><circle cx="180" cy="40" r="10" fill="#fbbf24" opacity=".12"/>${cityBg(360,120,seed+3).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'').replace(/viewBox="[^"]*"/,'').replace(/xmlns="[^"]*"/,'')}<rect x="0" y="110" width="360" height="30" fill="#070710"/><rect x="0" y="110" width="360" height="4" fill="#121224" opacity=".8"/><rect x="100" y="112" width="40" height="3" fill="#9d4edd" opacity=".12"/><rect x="220" y="112" width="40" height="3" fill="#38bdf8" opacity=".1"/></svg>`,
+    morning_after:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#0a0e18"/><rect x="0" y="0" width="360" height="70" fill="#0c1020" opacity=".9"/><rect x="60" y="10" width="240" height="90" fill="#0f1525" rx="4"/><rect x="68" y="18" width="224" height="74" fill="#121830"/><rect x="0" y="35" width="360" height="4" fill="#fbbf24" opacity=".04"/><rect x="0" y="55" width="360" height="3" fill="#fbbf24" opacity=".06"/><rect x="80" y="20" width="3" height="70" fill="#fbbf24" opacity=".06"/><rect x="180" y="20" width="3" height="70" fill="#fbbf24" opacity=".04"/><rect x="280" y="20" width="3" height="70" fill="#fbbf24" opacity=".06"/><rect x="0" y="100" width="360" height="40" fill="#0c0e1a"/><rect x="80" y="108" width="200" height="16" fill="#141830" rx="6"/><rect x="120" y="118" width="120" height="4" fill="#9d4edd" opacity=".2" rx="2"/></svg>`,
+    breakup:`<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="140" fill="#080808"/><rect x="0" y="0" width="360" height="140" fill="#0a0505" opacity=".5"/>${cityBg(360,140,seed+4).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'').replace(/viewBox="[^"]*"/,'').replace(/xmlns="[^"]*"/,'')}<rect x="0" y="0" width="360" height="140" fill="#ff4fa0" opacity=".02"/></svg>`
+  };
+  return `<svg viewBox="0 0 360 140" xmlns="http://www.w3.org/2000/svg">${(arts[type]||arts.evening_room).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</svg>`;
+}
+
+/* ════════════════════════════════════════
+   LOAD / RESUME SCENE
+════════════════════════════════════════ */
+async function loadScene(){
+  const ch=S.chats[S.activeChat];
+  if(!ch) return;
+  setupGameHeader(ch.girl);
+  const body=document.getElementById('game-body');
+  body.innerHTML='';
+  showLoading(body);
+  try{
+    const sys=getSystemPrompt(ch);
+    const prompt=getScenePrompt(ch);
+    const raw=await callClaude(sys,prompt);
+    const json=parseJSON(raw);
+    if(!json){showError(body,'Ошибка генерации. Попробуй ещё раз.');return;}
+    normalizeScene(json);
+    ch.phase=json.phase||ch.phase;
+    if(ch.scenes.length===0) ensureGreeting(json,ch);
+    renderSceneJSON(json,body,ch);
+  }catch(e){
+    console.error(e);
+    showError(body,e.message||'Ошибка соединения. Проверь интернет.');
+  }
+}
+
+/* Ensures the first scene actually starts with a greeting,
+   not mid-conversation. Mutates scene in place. */
+function ensureGreeting(scene,ch){
+  if(!scene||!Array.isArray(scene.girlMessages)) scene.girlMessages=[];
+  const msgs=scene.girlMessages;
+  const isGreet=t=>/^(привет|хай|hi|hello|хелоу|здаров|hey|йоу|здравствуй|ку|алоха|добрый\s+(день|вечер|утро))/i.test((t||'').trim());
+  const hasSystem=msgs.some(m=>m.from==='system');
+  const firstReal=msgs.find(m=>m.from!=='system');
+  if(!hasSystem){
+    msgs.unshift({from:'system',text:`У вас мэтч с ${ch.girl.name}`});
+  }
+  if(!firstReal||!isGreet(firstReal.text)){
+    // Insert a girl-side greeting right after system msg
+    const sysIdx=msgs.findIndex(m=>m.from==='system');
+    const greet={from:'them',text:`Привет 👋`};
+    msgs.splice(sysIdx+1,0,greet);
+  }
+}
+
+async function resumeScene(ch){
+  const body=document.getElementById('game-body');
+  body.innerHTML='';
+  if(ch.scenes.length){
+    const last=ch.scenes[ch.scenes.length-1];
+    if(!last.resolved){
+      renderSceneJSON(last.data,body,ch);
+      return;
+    }
+  }
+  await loadScene();
+}
+
+/* Normalize Gemini output — it sometimes returns strings where we expect
+   objects/arrays. We coerce to canonical shape so renderers never crash. */
+function normalizeHq(hq){
+  if(!hq) return [];
+  if(typeof hq==='string') return [{who:'n',name:'Совет',text:hq}];
+  if(!Array.isArray(hq)) return [];
+  return hq.map(h=>{
+    if(typeof h==='string') return {who:'n',name:'Совет',text:h};
+    if(h&&typeof h==='object') return {who:h.who||'n',name:h.name||'Совет',text:String(h.text||'')};
+    return null;
+  }).filter(Boolean);
+}
+function normalizeScene(s){
+  if(!s||typeof s!=='object') return null;
+  if(!Array.isArray(s.girlMessages)) s.girlMessages=[];
+  s.girlMessages=s.girlMessages.map(m=>{
+    if(typeof m==='string') return {from:'them',text:m};
+    if(m&&typeof m==='object') return {from:m.from||'them',text:String(m.text||'')};
+    return null;
+  }).filter(Boolean);
+  s.hq=normalizeHq(s.hq);
+  if(!Array.isArray(s.choices)) s.choices=[];
+  s.choices=s.choices.map((c,i)=>{
+    const key='abcd'[i]||String.fromCharCode(97+i);
+    if(typeof c==='string') return {key,text:c};
+    if(c&&typeof c==='object') return {key:(c.key||key).toString().toLowerCase().slice(0,1),text:String(c.text||'')};
+    return null;
+  }).filter(Boolean);
+  s.sceneTitle=String(s.sceneTitle||'');
+  s.visual=String(s.visual||'');
+  s.inner=String(s.inner||'');
+  s.artType=String(s.artType||'evening_room');
+  s.endScene=Boolean(s.endScene);
+  if(s.endScene){
+    s.endingType=String(s.endingType||'soft_end');
+    s.endingText=String(s.endingText||'История завершилась.');
+  }
+  return s;
+}
+/* ════════════════════════════════════════
+   ENDING ENGINE — client-side fallback
+   AI постоянно увиливает от финала. Мы форсим жёстко.
+════════════════════════════════════════ */
+function autoPhase(sceneNum){
+  if(sceneNum>=12) return 'deep';
+  if(sceneNum>=10) return 'afterdate';
+  if(sceneNum>=6)  return 'date';
+  if(sceneNum>=4)  return 'date_setup';
+  if(sceneNum>=2)  return 'texting';
+  return 'opening';
+}
+
+function pickEndingType(ch){
+  const score=ch.relationScore;
+  const cigs=ch.cigarettes||0;
+  if(cigs>=4) return 'smoked_out';
+  const pick=arr=>arr[Math.floor(Math.random()*arr.length)];
+  if(score>=80) return pick(['sex_implied','home_together','morning_after']);
+  if(score>=65) return pick(['kiss','second_date','success_date']);
+  if(score>=45) return pick(['second_date','success_date','soft_end']);
+  if(score>=25) return pick(['friends','soft_end','soft_end']);
+  if(score>=10) return pick(['rejected','walked_away','ghosted']);
+  return 'told_off';
+}
+
+const FALLBACK_ENDINGS={
+  sex_implied:    g=>`Ночь у ${g.name}. Свет приглушён, города не слышно. Где-то в районе двух часов ты перестал считать время. Утром её рука всё ещё на твоей груди — и больше ничего объяснять не нужно.`,
+  home_together:  g=>`${g.name} открывает дверь своей квартиры, поворачивается, смотрит. "Кофе?" — но это уже не про кофе, и вы оба это знаете. Ты заходишь. Дверь закрывается.`,
+  morning_after:  g=>`Утро. Её футболка тебе чуть мала. Кофе на двоих, она смеётся над чем-то в телефоне. ${g.name} ловит твой взгляд и улыбается так, как не улыбалась вчера. Это начало чего-то — и оба это знают.`,
+  kiss:           g=>`Такси у её дома. ${g.name} задерживает руку на дверной ручке, поворачивается. Поцелуй короткий, но такой, что Висбаден на минуту перестаёт существовать. "Пиши" — и она уходит. Ты улыбаешься как идиот всю дорогу домой.`,
+  second_date:    g=>`"Так. Суббота. Твоя очередь выбирать место." ${g.name} ставит смайлик в конце. Ты смотришь в пустую комнату — она уже не такая пустая. Никита: "ну блять, наконец-то нормально."`,
+  success_date:   g=>`Вечер кончился без поцелуя, без громких слов. Кончился хорошо. По-настоящему хорошо. ${g.name} написала "спасибо за вечер" — три слова, в которых больше, чем во всех смайлах последних недель.`,
+  soft_end:       g=>`Что-то было. Что-то не сложилось. ${g.name} желает спокойной ночи, и по интонации ты понимаешь — больше она не напишет. Это не плохо. Это просто так бывает в Висбадене в мае.`,
+  friends:        g=>`"Слушай, ты классный, правда. Но я не чувствую того." ${g.name} говорит это в глаза, без увиливаний. Это уважение. Френдзона — не приговор, иногда это просто честность, и от этого даже теплее.`,
+  rejected:       g=>`"Извини, я не вижу нас вместе." ${g.name} коротко, без театра, без объяснений. За окном дождит. Никита уже пишет: "ну и хер с ней, поехали в бар". Дэн: "минус одна гипотеза, плюс данные."`,
+  walked_away:    g=>`${g.name} встала из-за стола посреди ужина. "Знаешь что? Я пойду." Без злости — просто устала. Счёт официант принёс тебе. Ты сидишь ещё минут двадцать, доедая пасту в одиночестве.`,
+  ghosted:        g=>`Ты пишешь — она в сети, не отвечает. Через день — то же самое. Через три — фотка в её сторис с каким-то парнем. Висбаден маленький. Никита молчит. Дэн: "это данные, дружище."`,
+  told_off:       g=>`"Иди нахуй." Одно сообщение. ${g.name} удалила тебя из мэтчей через минуту. Скрин в чат с друзьями. Дэн: "ну, зато опыт." Никита: "Какой блять опыт, ты дебил."`,
+  smoked_out:     g=>`Ты вышел "на минуту". Затянулся. ${g.name} написала что-то — ты ответил через час. Она уже не отвечает. Висбаден, дым, фонарь над головой. Демон молчит — он своё получил. Никита в чате: "ну ты и дебил".`,
+  drunk_disaster: g=>`Утром в телефоне 14 непрочитанных от ${g.name} — все злые. Где-то между четвёртым и пятым бокалом ты что-то сказал. Что именно — уже не вспомнишь. Скриншоты ты тоже удалить не успел.`,
+  morning_regret: g=>`Ты проснулся в её квартире — её нет. Записка на столе: "Прости, мне нужно подумать. Не пиши пока." Кофе остыл, занавески задёрнуты. Ты уходишь, не запирая дверь, и всю дорогу домой жалеешь — но не знаешь о чём именно.`
+};
+
+function artForEnding(t){
+  if(t==='sex_implied'||t==='morning_after'||t==='morning_regret') return 'morning_after';
+  if(t==='smoked_out') return 'night_city';
+  if(t==='rejected'||t==='walked_away'||t==='ghosted'||t==='told_off'||t==='drunk_disaster') return 'breakup';
+  if(t==='kiss'||t==='home_together') return 'afterdate';
+  return 'afterdate';
+}
+
+function buildSyntheticEnding(ch){
+  const type=pickEndingType(ch);
+  const fn=FALLBACK_ENDINGS[type];
+  return {
+    endScene:true,
+    endingType:type,
+    endingText:fn?fn(ch.girl):'История завершилась.',
+    artType:artForEnding(type),
+    sceneTitle:'Финал',
+    girlMessages:[],hq:[],choices:[],
+    visual:'',inner:''
+  };
+}
+
+function normalizeResult(r){
+  if(!r||typeof r!=='object') return null;
+  return {
+    text:String(r.text||''),
+    girlReply:r.girlReply?String(r.girlReply):'',
+    hqReaction:normalizeHq(r.hqReaction)
+  };
+}
+
+function escHTML(s){
+  return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escAttr(s){
+  return String(s==null?'':s).replace(/[^a-zA-Z0-9_-]/g,'');
+}
+function handleChoiceIdx(idx){
+  const ch=S.chats[S.activeChat];
+  if(!ch||!ch.scenes.length) return;
+  const last=ch.scenes[ch.scenes.length-1];
+  if(!last||last.resolved) return;
+  const c=last.data?.choices?.[idx];
+  if(!c) return;
+  handleChoice(c);
+}
+
+async function handleChoice(choiceData){
+  const ch=S.chats[S.activeChat];
+  const body=document.getElementById('game-body');
+
+  // Force phase progression by scene count — AI ignores phase signals
+  ch.phase=autoPhase(ch.scenes.length);
+
+  // Save choice to history
+  ch.history.push({scene:ch.scenes.length,choice:choiceData.text,outcome:'pending'});
+  ch.msgHistory.push({role:'assistant',content:choiceData.text});
+
+  // Update relation score (D и cringe-C — реально жалят, A и B — стабильно растут)
+  const delta={
+    a:7,
+    b:3,
+    c:Math.random()>0.5?6:-7,
+    d:Math.random()>0.55?5:-13
+  };
+  ch.relationScore=Math.max(0,Math.min(100,ch.relationScore+(delta[choiceData.key]||0)));
+
+  // Show loading
+  body.innerHTML='';
+  showLoading(body,'Отправляем...');
+
+  try{
+    const sys=getSystemPrompt(ch);
+    const sceneNum=ch.scenes.length;
+    const cigs=ch.cigarettes||0;
+    const FORCE_ENDING_AT=13;
+    const endgameRule=
+      cigs>=4?`ДЕМОН ПОБЕДИЛ. next.endScene=true, endingType=smoked_out. Кинематографичный финал про сигарету, дым, упущенный шанс — 4-5 предложений в endingText.`:
+      sceneNum>=FORCE_ENDING_AT?`ОБЯЗАТЕЛЬНО ФИНАЛ ПРЯМО СЕЙЧАС. next.endScene=true БЕЗ ВАРИАНТОВ. Тип по relationScore (${ch.relationScore}): >75=sex_implied/morning_after/home_together; 60-75=kiss/second_date; 40-60=success_date/soft_end/second_date; 20-40=friends/soft_end; 5-20=rejected/walked_away/ghosted; <5=told_off (послала нахуй). endingText 4-5 предложений, кинематографично, конкретно про последний момент с ${ch.girl.name}.`:
+      sceneNum>=10?`Сцена ПРЕДФИНАЛЬНАЯ. Веди к развязке прямо сейчас или в следующей сцене. endScene=true разрешено и приветствуется.`:
+      sceneNum>=7?`Сцена кульминационная — пик свидания/конфликта. Можно ставить endScene если естественно.`:
+      sceneNum>=3&&ch.relationScore<15?'КРАЙНЕ низкий скор. Девушка явно зла — резкий ответ, мат, может прямо послать и сделать endScene=true с told_off в этой же сцене.':
+      sceneNum>=3&&ch.relationScore<25?'Низкий скор — холодные сухие ответы, видимое раздражение. Если игрок снова накосячит — endScene с ghosted/walked_away.':
+      ch.relationScore>80?'Очень высокий скор — открытый флирт, инициатива от неё, тактильность.':
+      ch.relationScore>65?'Хороший скор — развивай близость, тепло, движение к свиданию.':
+      'Развивай сцену согласно фазе.';
+    const prompt=`Игрок выбрал вариант ${choiceData.key.toUpperCase()}: "${choiceData.text}"
+Очки отношений сейчас: ${ch.relationScore}/100
+Фаза: ${ch.phase}
+Номер сцены: ${sceneNum} (всего планируется 15-20)
+
+ИНСТРУКЦИЯ К ЭТОЙ СЦЕНЕ: ${endgameRule}
+
+ТЕКУЩИЕ ВЫКУРЕННЫЕ СИГАРЕТЫ В ЭТОМ ЧАТЕ: ${cigs}/4 (при 4 — обязательный smoked_out)
+
+Верни JSON с двумя полями:
+1. "result": { "text": "что произошло 2-3 предложения", "girlReply": "ответ девушки если есть", "hqReaction": [{"who":"n/d/dm","name":"...","text":"..."}], "smoked": false }
+   • "smoked": true ТОЛЬКО если Димка В ЭТОЙ СЦЕНЕ реально закурил (по выбору игрока). Если просто Демон уговаривает или Никита отговаривает — smoked:false.
+2. "next": { ...полная следующая сцена в стандартном формате, ЛИБО финальная сцена с endScene:true, endingType, endingText... }`;
+    const raw=await callClaude(sys,prompt);
+    const json=parseJSON(raw);
+    if(!json){showError(body,'Ошибка. Попробуй ещё раз.');return;}
+
+    const result=normalizeResult(json.result);
+    let next=json.next?normalizeScene(json.next):null;
+
+    // FORCE ENDING: AI любит игнорить — клиент сам тригерит финал на 13+ или при cigs>=4
+    const HARD_END_AT=13;
+    const mustEnd=(ch.scenes.length>=HARD_END_AT)||((ch.cigarettes||0)>=4);
+    if(mustEnd){
+      if(!next||!next.endScene){
+        // AI не дал финал — синтезируем клиентом, текст из заготовок
+        console.warn('[forceEnding] AI ignored endScene, synthesizing locally');
+        next=buildSyntheticEnding(ch);
+      }else if(!next.endingText||next.endingText.length<40){
+        // Финал есть но текст пустой/куций — подменяем
+        const syn=buildSyntheticEnding(ch);
+        next.endingText=syn.endingText;
+        next.endingType=next.endingType||syn.endingType;
+      }
+    }
+
+    // Track smoking — structured signal first, narrow regex fallback.
+    // ВАЖЛИВО: рахуємо тільки коли Димка ФАКТИЧНО закурив, не коли Демон/штаб згадує сигарети.
+    let smoked=false;
+    if(json.result && json.result.smoked===true) smoked=true;
+    if(!smoked){
+      // Tight regex: past-tense action verbs only, in result.text (not in hq, not in inner)
+      const tight=/\b(закурил|затянулся|затянулась|выкурил|задымил|зажёг сигарету|зажег сигарету|достал пачку)\b/i;
+      if(tight.test(result?.text||'')) smoked=true;
+    }
+    if(smoked){
+      ch.cigarettes=(ch.cigarettes||0)+1;
+      S.cigarettes=(S.cigarettes||0)+1; // lifetime stat for profile
+    }
+
+    // Update history
+    if(ch.history.length) ch.history[ch.history.length-1].outcome=result?.text||'';
+
+    // Render result + next scene
+    renderResult(result,body,ch);
+    if(next){
+      if(next.endScene){
+        renderEnding(next,body,ch);
+      } else {
+        ch.phase=next.phase||ch.phase;
+        renderNextScene(next,body,ch);
+      }
+    }
+  }catch(e){
+    console.error(e);
+    showError(body,'Ошибка. Попробуй ещё раз.');
+  }
+}
+
+/* ════════════════════════════════════════
+   RENDER HELPERS
+════════════════════════════════════════ */
+function showLoading(body, txt='Генерируем сцену...'){
+  body.innerHTML=`<div class="ai-loading"><div class="ai-loading-ring"></div><div class="ai-loading-txt">${txt}</div></div>`;
+}
+function showError(body, txt){
+  body.innerHTML=`<div style="text-align:center;padding:32px 20px;color:var(--muted)"><div style="font-size:28px;margin-bottom:12px">⚠️</div><div style="font-size:13px">${txt}</div><button onclick="loadScene()" style="margin-top:16px;background:var(--accent);border:none;border-radius:12px;padding:10px 24px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-ui)">Повторить</button></div>`;
+}
+
+function renderSceneJSON(scene, body, ch){
+  const g=ch.girl;
+  const seed=g.id.charCodeAt(0)*7+(ch.scenes.length*13);
+
+  let msgs='';
+  (scene.girlMessages||[]).forEach(m=>{
+    const t=escHTML(m.text);
+    if(m.from==='system') msgs+=`<div class="msg-sys">${t}</div>`;
+    else if(m.from==='me') msgs+=`<div class="msg me"><div class="msg-b">${t}</div></div>`;
+    else msgs+=`<div class="msg them"><div class="msg-b">${t}</div><div class="msg-t">сейчас</div></div>`;
+  });
+
+  const hqHTML=(scene.hq||[]).map(h=>`<div class="hq-row"><span class="hq-who ${escAttr(h.who)}">${escHTML(h.name)}:</span><span class="hq-txt">${escHTML(h.text)}</span></div>`).join('');
+
+  const choicesHTML=(scene.choices||[]).map((c,i)=>`<button class="choice" onclick="handleChoiceIdx(${i})"><div class="ch-key ${escAttr(c.key)}">${escHTML((c.key||'').toUpperCase())}</div><div class="ch-txt">${escHTML(c.text)}</div></button>`).join('');
+
+  body.innerHTML=`
+    <div class="scene-card">
+      ${getArt(scene.artType||'evening_room',seed)}
+      <div class="scene-label">
+        <span class="scene-label-txt">${escHTML(scene.sceneTitle||'...')}</span>
+        <span class="scene-sub-txt">${escHTML(phaseLabel(scene.phase||ch.phase))}</span>
+      </div>
+    </div>
+    ${scene.visual?`<div style="font-size:13px;color:var(--muted);line-height:1.7;font-style:italic;padding:0 2px">${escHTML(scene.visual)}</div>`:''}
+    <div class="phone-ui">
+      <div class="ph-hdr">
+        <div class="ph-av">${smallAvatar(g,38)}</div>
+        <div><div class="ph-name">${escHTML(g.name)}</div><div class="ph-st">● онлайн</div></div>
+      </div>
+      <div class="ph-msgs">
+        ${msgs}
+        <div class="typing-row"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div><div class="typing-lbl">Димка печатает...</div></div>
+      </div>
+    </div>
+    ${scene.inner?`<div style="font-size:13px;color:#9090c0;font-style:italic;line-height:1.65;border-left:2px solid var(--accent);padding:8px 12px;background:var(--s2);border-radius:0 12px 12px 0">${escHTML(scene.inner)}</div>`:''}
+    <div class="hq"><div class="hq-ttl">Штаб на плечах</div>${hqHTML}</div>
+    <div class="choices"><div class="choices-ttl">Выбор</div>${choicesHTML}</div>
+  `;
+
+  ch.scenes.push({data:scene,resolved:false});
+  scrollBottom();
+}
+
+function renderResult(result, body, ch){
+  if(!result) return;
+  const g=ch.girl;
+  let html=`<div class="result-blk"><div class="result-ttl">Результат</div>${escHTML(result.text||'')}</div>`;
+  if(result.girlReply){
+    html+=`<div class="phone-ui"><div class="ph-hdr"><div class="ph-av">${smallAvatar(g,38)}</div><div><div class="ph-name">${escHTML(g.name)}</div><div class="ph-st">только что</div></div></div><div class="ph-msgs"><div class="msg them"><div class="msg-b">${escHTML(result.girlReply)}</div></div></div></div>`;
+  }
+  if(result.hqReaction?.length){
+    const hq=result.hqReaction.map(h=>`<div class="hq-row"><span class="hq-who ${escAttr(h.who)}">${escHTML(h.name)}:</span><span class="hq-txt">${escHTML(h.text)}</span></div>`).join('');
+    html+=`<div class="hq"><div class="hq-ttl">Реакция штаба</div>${hq}</div>`;
+  }
+  body.innerHTML=html;
+}
+
+function renderNextScene(scene, body, ch){
+  const g=ch.girl;
+  const seed=g.id.charCodeAt(0)*7+(ch.scenes.length*13);
+  const msgs=(scene.girlMessages||[]).map(m=>{
+    const t=escHTML(m.text);
+    if(m.from==='system') return `<div class="msg-sys">${t}</div>`;
+    if(m.from==='me') return `<div class="msg me"><div class="msg-b">${t}</div></div>`;
+    return `<div class="msg them"><div class="msg-b">${t}</div><div class="msg-t">сейчас</div></div>`;
+  }).join('');
+  const hqHTML=(scene.hq||[]).map(h=>`<div class="hq-row"><span class="hq-who ${escAttr(h.who)}">${escHTML(h.name)}:</span><span class="hq-txt">${escHTML(h.text)}</span></div>`).join('');
+  const choicesHTML=(scene.choices||[]).map((c,i)=>`<button class="choice" onclick="handleChoiceIdx(${i})"><div class="ch-key ${escAttr(c.key)}">${escHTML((c.key||'').toUpperCase())}</div><div class="ch-txt">${escHTML(c.text)}</div></button>`).join('');
+
+  body.innerHTML+=`
+    <div style="height:1px;background:var(--border);margin:4px 0"></div>
+    <div class="scene-card">
+      ${getArt(scene.artType||'night_city',seed+7)}
+      <div class="scene-label">
+        <span class="scene-label-txt">${escHTML(scene.sceneTitle||'...')}</span>
+        <span class="scene-sub-txt">${escHTML(phaseLabel(scene.phase||ch.phase))}</span>
+      </div>
+    </div>
+    ${scene.visual?`<div style="font-size:13px;color:var(--muted);line-height:1.7;font-style:italic;padding:0 2px">${escHTML(scene.visual)}</div>`:''}
+    <div class="phone-ui">
+      <div class="ph-hdr"><div class="ph-av">${smallAvatar(g,38)}</div><div><div class="ph-name">${escHTML(g.name)}</div><div class="ph-st">● онлайн</div></div></div>
+      <div class="ph-msgs">${msgs}<div class="typing-row"><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div><div class="typing-lbl">Димка печатает...</div></div></div>
+    </div>
+    ${scene.inner?`<div style="font-size:13px;color:#9090c0;font-style:italic;line-height:1.65;border-left:2px solid var(--accent);padding:8px 12px;background:var(--s2);border-radius:0 12px 12px 0">${escHTML(scene.inner)}</div>`:''}
+    <div class="hq"><div class="hq-ttl">Штаб на плечах</div>${hqHTML}</div>
+    <div class="choices"><div class="choices-ttl">Выбор</div>${choicesHTML}</div>
+  `;
+
+  if(ch.scenes.length) ch.scenes[ch.scenes.length-1].resolved=true;
+  ch.scenes.push({data:scene,resolved:false});
+  scrollBottom();
+}
+
+function renderEnding(scene, body, ch){
+  const endingIcons={
+    success_date:'🌙',kiss:'💋',home_together:'🏠',soft_end:'🌅',
+    rejected:'💔',walked_away:'🚶',ghosted:'👻',friends:'🤝',
+    sex_implied:'✨',morning_after:'☀️',second_date:'📅',
+    smoked_out:'🚬',told_off:'🤬',drunk_disaster:'🥴',morning_regret:'😵',
+    default:'🎮'
+  };
+  const icon=endingIcons[scene.endingType]||endingIcons.default;
+  const endColors={
+    success_date:'#9d4edd',kiss:'#ff4fa0',home_together:'#fbbf24',
+    soft_end:'#38bdf8',rejected:'#6b7280',walked_away:'#ef4444',
+    ghosted:'#6b7280',friends:'#38bdf8',sex_implied:'#ff4fa0',
+    morning_after:'#fbbf24',second_date:'#9d4edd',
+    smoked_out:'#a16207',told_off:'#dc2626',drunk_disaster:'#a855f7',morning_regret:'#94a3b8'
+  };
+  const col=endColors[scene.endingType]||'#9d4edd';
+
+  body.innerHTML+=`
+    <div style="height:1px;background:var(--border);margin:4px 0"></div>
+    <div class="scene-card">
+      ${getArt(scene.artType||'afterdate',42)}
+      <div class="scene-label"><span class="scene-label-txt">Финал</span></div>
+    </div>
+    <div class="ending">
+      <div class="ending-em">${icon}</div>
+      <div class="ending-tt" style="color:${col}">${escHTML(endingLabel(scene.endingType))}</div>
+      <div class="ending-tx">${escHTML(scene.endingText||'')}</div>
+      <button class="next-btn" onclick="startNewStory()" style="margin-bottom:10px">↺ Новая история с ${escHTML(ch.girl.name)}</button>
+      <button class="next-btn" style="border-color:var(--muted);color:var(--muted);margin-top:6px" onclick="goTo('dating')">Вернуться к поиску</button>
+    </div>
+  `;
+  scrollBottom();
+}
+
+function startNewStory(){
+  const id=S.activeChat;
+  const ch=S.chats[id];
+  const g=ch.girl;
+  S.chats[id]={girl:g,phase:'opening',relationScore:50,history:[],msgHistory:[],scenes:[],sceneIdx:0,flags:{},cigarettes:0};
+  loadScene();
+}
+
+/* ════════════════════════════════════════
+   PROFILE (Dimka)
+════════════════════════════════════════ */
+function dimkaAvatar(){
+  return `<svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+    <rect width="110" height="110" fill="#1a1a30"/>
+    <circle cx="55" cy="48" r="28" fill="#0d0d20"/>
+    <ellipse cx="55" cy="40" rx="22" ry="20" fill="#2a1a10"/>
+    <ellipse cx="55" cy="52" rx="18" ry="20" fill="#d4956e"/>
+    <ellipse cx="48" cy="50" rx="2" ry="2.5" fill="#0a0505"/>
+    <ellipse cx="62" cy="50" rx="2" ry="2.5" fill="#0a0505"/>
+    <rect x="46" y="42" width="6" height="2" fill="#1a1a1a" rx="1"/>
+    <rect x="58" y="42" width="6" height="2" fill="#1a1a1a" rx="1"/>
+    <ellipse cx="55" cy="62" rx="5" ry="2" fill="#a04050"/>
+    <rect x="34" y="80" width="42" height="30" fill="#5b21b6"/>
+    <rect x="40" y="84" width="30" height="3" fill="#fbbf24" opacity=".8"/>
+    <text x="55" y="103" text-anchor="middle" font-size="9" fill="#fff" font-family="monospace" opacity=".6">D.I.M.K.A</text>
+  </svg>`;
+}
+
+function renderProfile(){
+  const body=document.getElementById('profile-body');
+  if(!body) return;
+  const matched=Object.keys(S.chats).length;
+  const finished=Object.values(S.chats).filter(c=>c.scenes.some(s=>s.data?.endScene)).length;
+  const lk=S.swipes.likes+S.swipes.supers;
+  body.innerHTML=`
+    <div class="prof-hero">
+      <div class="prof-av">${dimkaAvatar()}</div>
+      <div class="prof-name">Димка</div>
+      <div class="prof-tag">D.I.M.K.A. · Висбаден · 2026</div>
+      <div class="prof-bio">28 лет. Айтишник из Украины, переехал в Германию. Хочет бросить курить, найти девушку и не заплакать в Lidl. На связи 24/7 — Никита, Дэн и внутренний демон.</div>
+    </div>
+
+    <div class="prof-section">
+      <div class="prof-h">Статистика</div>
+      <div class="prof-stats">
+        <div class="prof-stat"><div class="prof-stat-v">${lk}</div><div class="prof-stat-l">Лайков</div></div>
+        <div class="prof-stat"><div class="prof-stat-v">${matched}</div><div class="prof-stat-l">Мэтчей</div></div>
+        <div class="prof-stat"><div class="prof-stat-v">${finished}</div><div class="prof-stat-l">Финалов</div></div>
+      </div>
+    </div>
+
+    <div class="prof-section">
+      <div class="prof-h">Сила воли</div>
+      <div class="prof-meter"><div class="prof-meter-fill" style="width:${Math.max(0,100-S.cigarettes*10)}%"></div></div>
+      <div class="prof-meter-lbl"><span>Сигарет за вечер: ${S.cigarettes}</span><span>Демон: ${S.cigarettes>3?'😈 ликует':'😴 спит'}</span></div>
+    </div>
+
+    <div class="prof-section">
+      <div class="prof-h">Характер</div>
+      <div class="prof-traits">
+        <span class="prof-trait good">добрый</span>
+        <span class="prof-trait good">смешной</span>
+        <span class="prof-trait good">внимательный</span>
+        <span class="prof-trait">тревожный</span>
+        <span class="prof-trait">мечтатель</span>
+        <span class="prof-trait bad">курит</span>
+        <span class="prof-trait bad">прокрастинирует</span>
+      </div>
+    </div>
+
+    <div class="prof-section">
+      <div class="prof-h">Штаб на плечах</div>
+      <div class="prof-hq-row">
+        <div class="prof-hq-av" style="background:rgba(251,191,36,.18);color:#fbbf24">🥷</div>
+        <div class="prof-hq-info"><div class="prof-hq-name" style="color:var(--gold)">Никита</div><div class="prof-hq-desc">Дерзкий друг. Пушит на действие, не любит соплей. "Пиши уже, не тупи."</div></div>
+      </div>
+      <div class="prof-hq-row">
+        <div class="prof-hq-av" style="background:rgba(56,189,248,.18);color:#38bdf8">🧠</div>
+        <div class="prof-hq-info"><div class="prof-hq-name" style="color:var(--ac3)">Дэн</div><div class="prof-hq-desc">Стратег. Считает калории и шансы. Кидает мемы в нужный момент.</div></div>
+      </div>
+      <div class="prof-hq-row">
+        <div class="prof-hq-av" style="background:rgba(255,79,160,.18);color:#ff4fa0">😈</div>
+        <div class="prof-hq-info"><div class="prof-hq-name" style="color:var(--ac2)">Никотиновый демон</div><div class="prof-hq-desc">Шепчет: "одна сигаретка ничего не изменит". Изменит. Слушай его на свой страх.</div></div>
+      </div>
+    </div>
+
+    <div class="prof-section" style="border-bottom:none">
+      <div class="prof-h">Цель</div>
+      <div style="font-size:14px;color:#c0c0d8;line-height:1.65">Склеить и не закурить. Хотя бы одну. Хотя бы один вечер.</div>
+    </div>
+  `;
+}
+
+/* ════════════════════════════════════════
+   UTILS
+════════════════════════════════════════ */
+function parseJSON(str){
+  try{
+    // Try direct parse
+    return JSON.parse(str);
+  }catch(e){
+    // Try extract from markdown
+    const m=str.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if(m)try{return JSON.parse(m[1].trim())}catch(e2){}
+    // Try find { }
+    const s=str.indexOf('{'),en=str.lastIndexOf('}');
+    if(s>=0&&en>s)try{return JSON.parse(str.slice(s,en+1))}catch(e3){}
+    return null;
+  }
+}
+function phaseLabel(p){
+  const labels={opening:'Знакомство',texting:'Переписка',date_setup:'Договариваемся',date:'Свидание',afterdate:'После',deep:'Близость'};
+  return labels[p]||p||'';
+}
+function endingLabel(t){
+  const labels={
+    success_date:'Отличный вечер',kiss:'Поцелуй',home_together:'Пошли к ней',
+    soft_end:'Красиво, но...',rejected:'Отказ',walked_away:'Ушла',
+    ghosted:'Пропала',friends:'Просто друзья',sex_implied:'Остался на ночь',
+    morning_after:'Утро после',second_date:'До следующего раза',
+    smoked_out:'Скурился',told_off:'Послала нахуй',drunk_disaster:'Упился в хлам',morning_regret:'Утро сожаления'
+  };
+  return labels[t]||'Конец истории';
+}
+function scrollBottom(){
+  setTimeout(()=>{
+    const b=document.getElementById('game-body');
+    if(b) b.scrollTop=b.scrollHeight;
+  },100);
+}
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  renderCard();
+});
+</script>
+</body>
+</html>
