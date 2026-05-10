@@ -1,33 +1,36 @@
 # PROJECT D.I.M.K.A.
 
-AI dating simulator — single-page HTML game powered by Gemini 2.5 Flash, hosted on Cloudflare Pages.
+AI dating simulator — single-page HTML game powered by Gemini 2.5 Flash, deployed as a Cloudflare Worker with static assets.
 
 ## Live
 
-https://simulator-dimka.pages.dev (after deploy)
+After deploy: `https://simulator-dimka.<your-account>.workers.dev`
 
 ## Architecture
 
-- `index.html` — entire frontend (HTML + CSS + JS in one file)
-- `functions/api/chat.js` — Cloudflare Pages Function that proxies `/api/chat` POST requests to Gemini API
-- Secret: `GEMINI_API_KEY` (set in Cloudflare Pages dashboard → Settings → Environment variables → Production)
+- `public/index.html` — entire frontend (HTML + CSS + JS in one file)
+- `worker.js` — Cloudflare Worker entry. Handles `/api/chat` proxy to Gemini, falls through to static assets for everything else
+- `wrangler.jsonc` — Workers config with `[assets]` binding to serve `public/`
+- Required secret: `GEMINI_API_KEY` (set via `wrangler secret put GEMINI_API_KEY` or via Cloudflare dashboard)
+- Optional env: `GEMINI_MODEL` (default `gemini-2.5-flash`)
 
 ## Local dev
 
 ```bash
-npx wrangler pages dev . --port 8090
-```
-
-Set `GEMINI_API_KEY` in `.dev.vars` (gitignored):
-
-```
-GEMINI_API_KEY=your-key
+npm install
+echo "GEMINI_API_KEY=your-key" > .dev.vars
+npx wrangler dev
 ```
 
 ## Deploy
 
-Push to `main` — Cloudflare Pages auto-deploys.
+```bash
+npx wrangler deploy
+npx wrangler secret put GEMINI_API_KEY
+```
+
+Or push to `main` if connected via Cloudflare dashboard — auto-deploys.
 
 ## Game design
 
-Player is Dimka (28, IT, Wiesbaden, wants to quit smoking). Six girls with distinct archetypes. AI generates 13+ scene story arcs ending in 14 different finales (kiss, sex, smoked-out, told-off, ghosted, etc.). Score-driven branching with hard ending trigger at scene 13.
+Player is Dimka (28, IT, Wiesbaden, wants to quit smoking). Six girls with distinct archetypes. AI generates 13+ scene story arcs ending in 14 different finales (kiss, sex, smoked-out, told-off, ghosted, etc.). Score-driven branching with a hard ending trigger at scene 13 (client-side fallback ensures every game ends).
